@@ -10,8 +10,8 @@ API_KEY = os.getenv("BING_API_KEY")
 
 def copy_to_clipboard(coords):
     if coords:
-        windows.clipboard_clear()
-        windows.clipboard_append(coords))
+        window.clipboard_clear()
+        window.clipboard_append(coords)
         messagebox.showinfo("Copied!", "Coordinates copied to clipboard.")
     else:
         messagebox.showerror("Error!", "No coordinates to copy.")

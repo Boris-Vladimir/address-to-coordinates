@@ -44,7 +44,7 @@ A simple Windows tool to convert addresses into geographic coordinates (latitude
    ```
 2. Build the executable:
    ```bash
-   pyinstaller --onefile --windowed main.py
+   pyinstaller --onefile --windowed --additional-hooks-dir=. address-to-coordinates.py
    ```
 3. Copy the `.env` file to the `dist/` folder (where `main.exe` is located).
 4. Double-click `address_to_coordinates.exe` to run.
