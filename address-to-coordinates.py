@@ -8,6 +8,14 @@ import os
 load_dotenv()
 API_KEY = os.getenv("BING_API_KEY")
 
+def copy_to_clipboard():
+    if current_coordinates:
+        windows.clipboard_clear()
+        windows.clipboard_append(str(current_coordinates))
+        messagebox.showinfo("Copied!", "Coordinates copied to clipboard.")
+    else:
+        messagebox.showerror("Error!", "No coordinates to copy.")
+
 def get_coordinates():
     address = input_address.get()
 
@@ -22,7 +30,7 @@ def get_coordinates():
     try:
         # Query to Bing Maps API
         url = "http://dev.virtualearth.net/REST/v1/Locations"
-        params = {"q": address, "key": API_KEY, "max_results": 1}
+        params = {"q": address, "key": API_KEY, "maxResults": 1}
         response = requests.get(url, params=params)
         data = response.json()
 
@@ -30,15 +38,19 @@ def get_coordinates():
             coordinates = data["resourceSets"][0]["resources"][0]["point"]["coordinates"]
             result = f"{coordinates[0], coordinates[1]}"
             label_result.config(text=result)
+            # Show copy button only if there are coordinates
+            copy_button.pack(pady=5)
         else:
             messagebox.showerror("Error!", "Address not found.")
+            copy_button.pack_forget()  # Hide button
     except Exception as ex:
         messagebox.showerror("Error!", f"Connection failure: {ex}")
+        copy_button.pack_forget()
 
 # Window configuration
 window = tk.Tk()
 window.title("Address to Coordinates")
-window.geometry("400x200")
+window.geometry("400x250")
 
 # Interface elements
 tk.Label(window, text="Insert an address:", font=("Arial", 12)).pack(pady=10)
@@ -50,6 +62,8 @@ button.pack(pady=10)
 
 label_result = tk.Label(window, text="", font=("Arial", 10))
 label_result.pack(pady=10)
+
+copy_button = tk.Button(window, text="Copy", command=copy_to_clipboard)
 
 window.mainloop()
 
