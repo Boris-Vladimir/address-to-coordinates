@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
-import request
+import requests
 from dotenv import load_dotenv
 import os
 
@@ -23,17 +23,17 @@ def get_coordinates():
         # Query to Bing Maps API
         url = "http://dev.virtualearth.net/REST/v1/Locations"
         params = {"q": address, "key": API_KEY, "max_results": 1}
-        response = request.get(url, params=params)
+        response = requests.get(url, params=params)
         data = response.json()
 
         if response.status_code == 200 and data["resourceSets"]:
             coordinates = data["resourceSets"][0]["resources"][0]["point"]["coordinates"]
-            result = = f"{coordinates[0], coordinates[1]}"
+            result = f"{coordinates[0], coordinates[1]}"
             label_result.config(text=result)
         else:
             messagebox.showerror("Error!", "Address not found.")
     except Exception as ex:
-        messagebox.showerror("Error!", "Connection failure: {ex}")
+        messagebox.showerror("Error!", f"Connection failure: {ex}")
 
 # Window configuration
 window = tk.Tk()
@@ -45,7 +45,7 @@ tk.Label(window, text="Insert an address:", font=("Arial", 12)).pack(pady=10)
 input_address = tk.Entry(window, width=50)
 input_address.pack(pady=5)
 
-button = tk.Button(window, text="Get Coordinate", command=get_coordinates)
+button = tk.Button(window, text="Get Coordinates", command=get_coordinates)
 button.pack(pady=10)
 
 label_result = tk.Label(window, text="", font=("Arial", 10))
