@@ -8,10 +8,10 @@ import os
 load_dotenv()
 API_KEY = os.getenv("BING_API_KEY")
 
-def copy_to_clipboard():
-    if current_coordinates:
+def copy_to_clipboard(coords):
+    if coords:
         windows.clipboard_clear()
-        windows.clipboard_append(str(current_coordinates))
+        windows.clipboard_append(coords))
         messagebox.showinfo("Copied!", "Coordinates copied to clipboard.")
     else:
         messagebox.showerror("Error!", "No coordinates to copy.")
@@ -38,19 +38,30 @@ def get_coordinates():
             coordinates = data["resourceSets"][0]["resources"][0]["point"]["coordinates"]
             result = f"{coordinates[0], coordinates[1]}"
             label_result.config(text=result)
-            # Show copy button only if there are coordinates
-            copy_button.pack(pady=5)
+
+            # Create button dinamicaly
+            if hasattr(window, 'copy_btn'):
+                window.copy_btn.destroy()
+
+            window.copy_btn = tk.Button(
+                window,
+                text="Copy",
+                command=lambda: copy_to_clipboard(coordinates)
+            )
+            window.copy_btn.pack(pady=5)
         else:
             messagebox.showerror("Error!", "Address not found.")
-            copy_button.pack_forget()  # Hide button
+            if hasattr(window, "copy_btn"):
+                window.copy_btn.destroy()
     except Exception as ex:
         messagebox.showerror("Error!", f"Connection failure: {ex}")
-        copy_button.pack_forget()
+        if hasattr(window, "copy_btn"):
+            window.copy_btn.destroy()
 
 # Window configuration
 window = tk.Tk()
 window.title("Address to Coordinates")
-window.geometry("400x250")
+window.geometry("400x220")
 
 # Interface elements
 tk.Label(window, text="Insert an address:", font=("Arial", 12)).pack(pady=10)
@@ -62,8 +73,6 @@ button.pack(pady=10)
 
 label_result = tk.Label(window, text="", font=("Arial", 10))
 label_result.pack(pady=10)
-
-copy_button = tk.Button(window, text="Copy", command=copy_to_clipboard)
 
 window.mainloop()
 
